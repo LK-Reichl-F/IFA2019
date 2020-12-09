@@ -1,0 +1,29 @@
+Spezifikation für die Beschreibung
+
+Gültige Eigenschaften und mögliche Werte dazu
+
+Beschriftung
+    Beliebiger Text
+
+Typ
+    integer
+    string
+    date
+    boolean
+    float
+
+Min
+    Kleinster, erlaubter Wert in Abhängigkeit vom Typ
+
+Max
+    Größter, erlaubter Wert in Abhängigkeit vom Typ
+
+MaxLänge
+    Maximale Länge der Eingabe
+
+MöglicheWerte
+    Eine Liste aller erlaubter Werte in Abhängigkeit vom Typ
+
+RegEx
+    Ein regulärer Ausdruck, der die Eingabe des Benutzers entsprechen muss.
+    
