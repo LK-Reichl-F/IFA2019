@@ -49,8 +49,8 @@ class Eingabefeld {
     }
     test(text) {
         switch (this.spezifikation.Typ) {
-            // case "integer":
-            //     return this.integerTest(text);
+            case "integer":
+                return this.integerTest(text);
             case "string":
                 return this.stringTest(text);
             // case "date":
@@ -86,6 +86,34 @@ class Eingabefeld {
         }
         return true;
     }
+    integerTest(text) {
+        const zahl = parseInt(text, 10);
+        if (zahl === NaN) {
+            return false;
+        }
+        if (this.spezifikation.Min) {
+            if (zahl < this.spezifikation.Min) {
+                return false;
+            }
+        }
+        if (this.spezifikation.Max) {
+            if (zahl > this.spezifikation.Max) {
+                return false;
+            }
+        }
+        if (this.spezifikation.MöglicheWerte) {
+            if (!this.spezifikation.MöglicheWerte.includes(zahl)) {
+                return false;
+            }
+        }
+        if (this.spezifikation.RegEx) {
+            const regExp = new RegExp(this.spezifikation.RegEx);
+            if (!regExp.test(text)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
 const textEingabefeld = new Eingabefeld({
     "Beschriftung": "Gib einen Text ein",
@@ -98,4 +126,17 @@ document.write("Sie: " + textEingabefeld.test("Sie") + "<br>");
 document.write("Siehe: " + textEingabefeld.test("Siehe") + "<br>");
 document.write("x: " + textEingabefeld.test("x") + "<br>");
 document.write("xy: " + textEingabefeld.test("xy") + "<br>");
+// Übung:
+// Programmiere den Test für den Typ integer
+// Benutze parseInt
+const integerEingabefeld = new Eingabefeld({
+    "Typ": "integer",
+    "Min": 0,
+    "Max": 9,
+    "MöglicheWerte": [3, 13]
+});
+document.write("1: " + integerEingabefeld.test("1") + "<br>");
+document.write("3: " + integerEingabefeld.test("3") + "<br>");
+document.write("13: " + integerEingabefeld.test("13") + "<br>");
+document.write("Hugo: " + integerEingabefeld.test("Hugo") + "<br>");
 //# sourceMappingURL=SAPDatentypen.js.map
