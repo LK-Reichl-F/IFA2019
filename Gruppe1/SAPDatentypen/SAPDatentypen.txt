@@ -3,3 +3,29 @@ Spezifikation für die Eingabefelder:
 "Beschriftung"
     Hier darf ein beliebiger string stehen.
 
+"Typ"
+    "integer"
+    "string"
+    "date"
+    "float"
+
+"Mindestlänge"
+    Hier soll ein Integer stehen, der die Länge beschreibt,
+    die der Text des Wertes mindestens haben soll (gemessen in Zeichen)
+
+"Maximallänge"
+    Siehe "Mindestlänge".
+
+"Min"
+    Hier soll der minimale Wert stehen, den der Eingabetext haben soll.
+    Dazu wird der Wert mit dem umgewandelten Eingabetext verglichen.
+
+"Max"
+    Siehe "Min"
+
+"RegEx"
+    Hier wird ein Regulärer Ausdruck beschrieben, der erfüllt sein
+    muss.
+
+"MöglicheWerte"
+    Hier wird ein Array mit einer Liste erlaubter Werte angegeben.

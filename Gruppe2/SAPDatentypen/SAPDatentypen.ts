@@ -156,24 +156,37 @@ class Eingabefeld {
     }
 
     private testDate(text: string): boolean {
-        const datum = new Date(text);
-        console.log({ datum: datum });
+        const datum = Date.parse(text);
+        if (isNaN(datum)) {
+            return false;
+        }
         return true;
     } 
 }
 
-// const meinEingabefeld = new Eingabefeld({
-//     "Typ": "string",
-//     "MaxLänge": 3,
-//     "MöglicheWerte": ['Er', 'Sie', 'Es']
-// });
+document.write("Test von string, Länge 3, Mögliche Werte Er, Sie, Es<br>")
+const meinEingabefeld = new Eingabefeld({
+    "Typ": "string",
+    "MaxLänge": 3,
+    "MöglicheWerte": ['Er', 'Sie', 'Es']
+});
 
-// document.write("Sie: " + meinEingabefeld.test('Sie') + "<br>");
-// document.write("Test: " + meinEingabefeld.test('Test') + "<br>");
-// document.write("xy: " + meinEingabefeld.test('xy') + "<br>");
+document.write("Sie: " + meinEingabefeld.test('Sie') + "<br>");
+document.write("Test: " + meinEingabefeld.test('Test') + "<br>");
+document.write("xy: " + meinEingabefeld.test('xy') + "<br>");
 
+document.write("<hr>Test von date:<br>");
 const meinDatum = new Eingabefeld({
     "Typ": "date"
 })
-meinDatum.test("2020-12-10");
-meinDatum.test("Hugo");
+document.write("2020-12-10: " + meinDatum.test("2020-12-10") + "<br>");;
+document.write("Hugo: " + meinDatum.test("Hugo") + "<br>");;
+
+document.write("<hr>Test einer E-Mail-Adresse:<br>");
+const meineEmail = new Eingabefeld({
+    "Typ": "string",
+    "RegEx": "[A-Za-z]+[A-Za-z0-9\.\-_]*@[a-z]+[a-z0-9\.\-_]*[0-9a-z]"
+});
+
+document.write("reichl.f@bs-hassfurt.de" + meineEmail.test("reichl.f@bs-hassfurt.de") + "<br>");
+document.write("reichl.fbs-hassfurt.de." + meineEmail.test("reichl.fbs-hassfurt.de.") + "<br>");
