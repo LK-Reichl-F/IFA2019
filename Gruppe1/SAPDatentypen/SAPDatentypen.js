@@ -7,7 +7,7 @@ const meinEingabefeld = {
     "BereichMin": 0,
     "BereichMax": 140
 };
-document.write(meinEingabefeld.Beschriftung);
+// document.write(meinEingabefeld.Beschriftung);
 // Übung:
 // Beschreibe etwa drei verschiedene Eingabefelder
 // im JSON-Format, so dass sie später von unserem
@@ -49,17 +49,53 @@ class Eingabefeld {
     }
     test(text) {
         switch (this.spezifikation.Typ) {
-            case "integer":
-                return integerTest(text);
+            // case "integer":
+            //     return this.integerTest(text);
             case "string":
-                return stringTest(text);
-            case "date":
-                return dateTest(text);
-            case "float":
-                return floatTest(text);
+                return this.stringTest(text);
+            // case "date":
+            //     return this.dateTest(text);
+            // case "float":
+            //     return this.floatTest(text);
             default:
                 return false;
         }
     }
+    stringTest(text) {
+        const länge = text.length;
+        if (this.spezifikation.Mindestlänge) {
+            if (länge < this.spezifikation.Mindestlänge) {
+                return false;
+            }
+        }
+        if (this.spezifikation.MaximalLänge) {
+            if (länge > this.spezifikation.Maximallänge) {
+                return false;
+            }
+        }
+        if (this.spezifikation.MöglicheWerte) {
+            if (!this.spezifikation.MöglicheWerte.includes(text)) {
+                return false;
+            }
+        }
+        if (this.spezifikation.RegEx) {
+            const regExp = new RegExp(this.spezifikation.RegEx);
+            if (!regExp.test(text)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
+const textEingabefeld = new Eingabefeld({
+    "Beschriftung": "Gib einen Text ein",
+    "Typ": "string",
+    "Mindestlänge": 2,
+    "Maximallänge": 3,
+    "MöglicheWerte": ["Er", "Sie", "Es"]
+});
+document.write("Sie: " + textEingabefeld.test("Sie") + "<br>");
+document.write("Siehe: " + textEingabefeld.test("Siehe") + "<br>");
+document.write("x: " + textEingabefeld.test("x") + "<br>");
+document.write("xy: " + textEingabefeld.test("xy") + "<br>");
 //# sourceMappingURL=SAPDatentypen.js.map
