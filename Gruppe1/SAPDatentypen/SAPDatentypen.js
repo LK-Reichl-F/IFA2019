@@ -53,10 +53,10 @@ class Eingabefeld {
                 return this.integerTest(text);
             case "string":
                 return this.stringTest(text);
-            // case "date":
-            //     return this.dateTest(text);
-            // case "float":
-            //     return this.floatTest(text);
+            case "date":
+                return this.dateTest(text);
+            case "float":
+                return this.floatTest(text);
             default:
                 return false;
         }
@@ -88,7 +88,7 @@ class Eingabefeld {
     }
     integerTest(text) {
         const zahl = parseInt(text, 10);
-        if (zahl === NaN) {
+        if (isNaN(zahl)) {
             return false;
         }
         if (this.spezifikation.Min) {
@@ -111,6 +111,41 @@ class Eingabefeld {
             if (!regExp.test(text)) {
                 return false;
             }
+        }
+        return true;
+    }
+    floatTest(text) {
+        const zahl = parseFloat(text);
+        if (isNaN(zahl)) {
+            return false;
+        }
+        if (this.spezifikation.Min) {
+            if (zahl < this.spezifikation.Min) {
+                return false;
+            }
+        }
+        if (this.spezifikation.Max) {
+            if (zahl > this.spezifikation.Max) {
+                return false;
+            }
+        }
+        if (this.spezifikation.MöglicheWerte) {
+            if (!this.spezifikation.MöglicheWerte.includes(zahl)) {
+                return false;
+            }
+        }
+        if (this.spezifikation.RegEx) {
+            const regExp = new RegExp(this.spezifikation.RegEx);
+            if (!regExp.test(text)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    dateTest(text) {
+        console.log(Date.parse(text));
+        if (isNaN(Date.parse(text))) {
+            return false;
         }
         return true;
     }
@@ -139,4 +174,9 @@ document.write("1: " + integerEingabefeld.test("1") + "<br>");
 document.write("3: " + integerEingabefeld.test("3") + "<br>");
 document.write("13: " + integerEingabefeld.test("13") + "<br>");
 document.write("Hugo: " + integerEingabefeld.test("Hugo") + "<br>");
+const datumsEingabefeld = new Eingabefeld({
+    "Typ": "date"
+});
+document.write("2020-12-11: " + datumsEingabefeld.test("2020-12-11") + "<br>");
+document.write("Hugo: " + datumsEingabefeld.test("Hugo") + "<br>");
 //# sourceMappingURL=SAPDatentypen.js.map

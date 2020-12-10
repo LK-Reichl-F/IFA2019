@@ -3,10 +3,10 @@
 
 // Beispiel:
 const meinEingabefeld = {
-    "Beschriftung" : "Alter",
-    "Typ" : "integer",
-    "BereichMin" : 0,
-    "BereichMax" : 140
+    "Beschriftung": "Alter",
+    "Typ": "integer",
+    "BereichMin": 0,
+    "BereichMax": 140
 };
 
 // document.write(meinEingabefeld.Beschriftung);
@@ -17,16 +17,16 @@ const meinEingabefeld = {
 // Programm ausgewertet werden können:
 
 const meineEmailAdresse = {
-    "Beschriftung" :  "E-Mail",
-    "Typ" : "string",
-    "Mindestlänge" : "1",
-    "mussEnthalten" : "@",
+    "Beschriftung": "E-Mail",
+    "Typ": "string",
+    "Mindestlänge": "1",
+    "mussEnthalten": "@",
     "mussDerRegularExpressionEntsprechen": "[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{2,4}"
 }
 
 const meinGeburtstag = {
-    "Beschriftung" : "Geburtstag",
-    "Typ":  "date",
+    "Beschriftung": "Geburtstag",
+    "Typ": "date",
     "Format": "ISO8601",
     "FormatString": "YYYY-MM-DD",
     "Minimum": "1970-01-01",
@@ -34,7 +34,7 @@ const meinGeburtstag = {
 }
 
 const meinGeschlecht = {
-    "Beschriftung" : "Geschlecht",
+    "Beschriftung": "Geschlecht",
     "Typ": "String",
     "MaximalLänge": 8,
     "möglicheWerte": ["männlich", "weiblich", "divers"]
@@ -43,7 +43,7 @@ const meinGeschlecht = {
 const meinName = {
     "Beschriftung": "Name",
     "Typ": "String",
-    "mussRegularExpressionEntsprechen" : "..."
+    "mussRegularExpressionEntsprechen": "..."
 }
 
 const meinPreis = {
@@ -63,10 +63,10 @@ class Eingabefeld {
                 return this.integerTest(text);
             case "string":
                 return this.stringTest(text);
-            // case "date":
-            //     return this.dateTest(text);
-            // case "float":
-            //     return this.floatTest(text);
+            case "date":
+                return this.dateTest(text);
+            case "float":
+                return this.floatTest(text);
             default:
                 return false;
         }
@@ -99,7 +99,7 @@ class Eingabefeld {
 
     private integerTest(text: string): boolean {
         const zahl = parseInt(text, 10);
-        if (zahl === NaN) {
+        if (isNaN(zahl)) {
             return false;
         }
         if (this.spezifikation.Min) {
@@ -122,6 +122,43 @@ class Eingabefeld {
             if (!regExp.test(text)) {
                 return false;
             }
+        }
+        return true;
+    }
+
+    private floatTest(text: string): boolean {
+        const zahl = parseFloat(text);
+        if (isNaN(zahl)) {
+            return false;
+        }
+        if (this.spezifikation.Min) {
+            if (zahl < this.spezifikation.Min) {
+                return false;
+            }
+        }
+        if (this.spezifikation.Max) {
+            if (zahl > this.spezifikation.Max) {
+                return false;
+            }
+        }
+        if (this.spezifikation.MöglicheWerte) {
+            if (!this.spezifikation.MöglicheWerte.includes(zahl)) {
+                return false;
+            }
+        }
+        if (this.spezifikation.RegEx) {
+            const regExp = new RegExp(this.spezifikation.RegEx);
+            if (!regExp.test(text)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private dateTest(text: string): boolean {
+        console.log(Date.parse(text));
+        if (isNaN(Date.parse(text))) {
+            return false;
         }
         return true;
     }
@@ -156,4 +193,10 @@ document.write("1: " + integerEingabefeld.test("1") + "<br>");
 document.write("3: " + integerEingabefeld.test("3") + "<br>");
 document.write("13: " + integerEingabefeld.test("13") + "<br>");
 document.write("Hugo: " + integerEingabefeld.test("Hugo") + "<br>");
+
+const datumsEingabefeld = new Eingabefeld({
+    "Typ": "date"
+});
+document.write("2020-12-11: " + datumsEingabefeld.test("2020-12-11") + "<br>");
+document.write("Hugo: " + datumsEingabefeld.test("Hugo") + "<br>");
 
