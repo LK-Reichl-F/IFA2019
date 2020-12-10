@@ -1,0 +1,5 @@
+Spezifikation für die Eingabefelder:
+
+"Beschriftung"
+    Hier darf ein beliebiger string stehen.
+
