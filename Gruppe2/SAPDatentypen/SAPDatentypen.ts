@@ -157,16 +157,23 @@ class Eingabefeld {
 
     private testDate(text: string): boolean {
         const datum = new Date(text);
-        
+        console.log({ datum: datum });
+        return true;
     } 
 }
 
-const meinEingabefeld = new Eingabefeld({
-    "Typ": "string",
-    "MaxLänge": 3,
-    "MöglicheWerte": ['Er', 'Sie', 'Es']
-});
+// const meinEingabefeld = new Eingabefeld({
+//     "Typ": "string",
+//     "MaxLänge": 3,
+//     "MöglicheWerte": ['Er', 'Sie', 'Es']
+// });
 
-document.write("Sie: " + meinEingabefeld.test('Sie') + "<br>");
-document.write("Test: " + meinEingabefeld.test('Test') + "<br>");
-document.write("xy: " + meinEingabefeld.test('xy') + "<br>");
+// document.write("Sie: " + meinEingabefeld.test('Sie') + "<br>");
+// document.write("Test: " + meinEingabefeld.test('Test') + "<br>");
+// document.write("xy: " + meinEingabefeld.test('xy') + "<br>");
+
+const meinDatum = new Eingabefeld({
+    "Typ": "date"
+})
+meinDatum.test("2020-12-10");
+meinDatum.test("Hugo");
