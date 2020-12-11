@@ -52,24 +52,67 @@ const meinPreis = {
     "BereichMaximum": 1000
 }
 
+// Ein interface ist so etwas wie ein Vertrag:
+interface Test {
+    test(text: string, spezifikation: any): boolean;
+}
+
+// Diese Klasse erfüllt den Vertrag:
+class testString implements Test {
+    test(text: string, spezifikation: any): boolean {
+        const länge = text.length;
+        if (spezifikation.Mindestlänge) {
+            if (länge < spezifikation.Mindestlänge) {
+                return false;
+            }
+        }
+        if (spezifikation.MaximalLänge) {
+            if (länge > spezifikation.Maximallänge) {
+                return false;
+            }
+        }
+        if (spezifikation.MöglicheWerte) {
+            if (!spezifikation.MöglicheWerte.includes(text)) {
+                return false;
+            }
+        }
+        if (spezifikation.RegEx) {
+            const regExp = new RegExp(spezifikation.RegEx);
+            if (!regExp.test(text)) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+
 class Eingabefeld {
-    private spezifikation;
-    public constructor(spezifikation) {
+    private testMap: Map<string, Test>;
+    private spezifikation: any;
+    public constructor(spezifikation: any) {
         this.spezifikation = spezifikation;
     }
+    public registriereTest(einTest: Test, typ: string) {
+        this.testMap.set(typ, einTest);
+    } 
     public test(text: string): boolean {
-        switch (this.spezifikation.Typ) {
-            case "integer":
-                return this.integerTest(text);
-            case "string":
-                return this.stringTest(text);
-            case "date":
-                return this.dateTest(text);
-            case "float":
-                return this.floatTest(text);
-            default:
-                return false;
+        const test = this.testMap.get(this.spezifikation.Typ);
+        if (test === undefined) {
+            throw new Error("Für den Typ " + this.spezifikation.Typ + " gibt es keinen Test.");
         }
+        return test.test(text, this.spezifikation);
+        // switch (this.spezifikation.Typ) {
+        //     case "integer":
+        //         return this.integerTest(text);
+        //     case "string":
+        //         return this.stringTest(text);
+        //     case "date":
+        //         return this.dateTest(text);
+        //     case "float":
+        //         return this.floatTest(text);
+        //     default:
+        //         return false;
+        // }
     }
     private stringTest(text: string): boolean {
         const länge = text.length;

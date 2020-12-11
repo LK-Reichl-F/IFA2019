@@ -43,23 +43,59 @@ const meinPreis = {
     "BereichMindestens": 100,
     "BereichMaximum": 1000
 };
+// Diese Klasse erfüllt den Vertrag:
+class testString {
+    test(text, spezifikation) {
+        const länge = text.length;
+        if (spezifikation.Mindestlänge) {
+            if (länge < spezifikation.Mindestlänge) {
+                return false;
+            }
+        }
+        if (spezifikation.MaximalLänge) {
+            if (länge > spezifikation.Maximallänge) {
+                return false;
+            }
+        }
+        if (spezifikation.MöglicheWerte) {
+            if (!spezifikation.MöglicheWerte.includes(text)) {
+                return false;
+            }
+        }
+        if (spezifikation.RegEx) {
+            const regExp = new RegExp(spezifikation.RegEx);
+            if (!regExp.test(text)) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
 class Eingabefeld {
     constructor(spezifikation) {
         this.spezifikation = spezifikation;
     }
+    registriereTest(einTest, typ) {
+        this.testMap.set(typ, einTest);
+    }
     test(text) {
-        switch (this.spezifikation.Typ) {
-            case "integer":
-                return this.integerTest(text);
-            case "string":
-                return this.stringTest(text);
-            case "date":
-                return this.dateTest(text);
-            case "float":
-                return this.floatTest(text);
-            default:
-                return false;
+        const test = this.testMap.get(this.spezifikation.Typ);
+        if (test === undefined) {
+            throw new Error("Für den Typ " + this.spezifikation.Typ + " gibt es keinen Test.");
         }
+        return test.test(text, this.spezifikation);
+        // switch (this.spezifikation.Typ) {
+        //     case "integer":
+        //         return this.integerTest(text);
+        //     case "string":
+        //         return this.stringTest(text);
+        //     case "date":
+        //         return this.dateTest(text);
+        //     case "float":
+        //         return this.floatTest(text);
+        //     default:
+        //         return false;
+        // }
     }
     stringTest(text) {
         const länge = text.length;
