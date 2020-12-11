@@ -44,7 +44,7 @@ const meinPreis = {
     "BereichMaximum": 1000
 };
 // Diese Klasse erfüllt den Vertrag:
-class testString {
+class TestString {
     test(text, spezifikation) {
         const länge = text.length;
         if (spezifikation.Mindestlänge) {
@@ -71,9 +71,78 @@ class testString {
         return true;
     }
 }
+class TestInteger {
+    test(text, spezifikation) {
+        const zahl = parseInt(text, 10);
+        if (isNaN(zahl)) {
+            return false;
+        }
+        if (spezifikation.Min) {
+            if (zahl < spezifikation.Min) {
+                return false;
+            }
+        }
+        if (spezifikation.Max) {
+            if (zahl > spezifikation.Max) {
+                return false;
+            }
+        }
+        if (spezifikation.MöglicheWerte) {
+            if (!spezifikation.MöglicheWerte.includes(zahl)) {
+                return false;
+            }
+        }
+        if (spezifikation.RegEx) {
+            const regExp = new RegExp(spezifikation.RegEx);
+            if (!regExp.test(text)) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+class TestFloat {
+    test(text, spezifikation) {
+        const zahl = parseFloat(text);
+        if (isNaN(zahl)) {
+            return false;
+        }
+        if (spezifikation.Min) {
+            if (zahl < spezifikation.Min) {
+                return false;
+            }
+        }
+        if (spezifikation.Max) {
+            if (zahl > spezifikation.Max) {
+                return false;
+            }
+        }
+        if (spezifikation.MöglicheWerte) {
+            if (!spezifikation.MöglicheWerte.includes(zahl)) {
+                return false;
+            }
+        }
+        if (spezifikation.RegEx) {
+            const regExp = new RegExp(spezifikation.RegEx);
+            if (!regExp.test(text)) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+class TestDate {
+    test(text, spezifikation) {
+        if (isNaN(Date.parse(text))) {
+            return false;
+        }
+        return true;
+    }
+}
 class Eingabefeld {
     constructor(spezifikation) {
         this.spezifikation = spezifikation;
+        this.testMap = new Map();
     }
     registriereTest(typ, einTest) {
         this.testMap.set(typ, einTest);
@@ -84,106 +153,6 @@ class Eingabefeld {
             throw new Error("Für den Typ " + this.spezifikation.Typ + " gibt es keinen Test.");
         }
         return testObjekt.test(text, this.spezifikation);
-        // switch (this.spezifikation.Typ) {
-        //     case "integer":
-        //         return this.integerTest(text);
-        //     case "string":
-        //         return this.stringTest(text);
-        //     case "date":
-        //         return this.dateTest(text);
-        //     case "float":
-        //         return this.floatTest(text);
-        //     default:
-        //         return false;
-        // }
-    }
-    stringTest(text) {
-        const länge = text.length;
-        if (this.spezifikation.Mindestlänge) {
-            if (länge < this.spezifikation.Mindestlänge) {
-                return false;
-            }
-        }
-        if (this.spezifikation.MaximalLänge) {
-            if (länge > this.spezifikation.Maximallänge) {
-                return false;
-            }
-        }
-        if (this.spezifikation.MöglicheWerte) {
-            if (!this.spezifikation.MöglicheWerte.includes(text)) {
-                return false;
-            }
-        }
-        if (this.spezifikation.RegEx) {
-            const regExp = new RegExp(this.spezifikation.RegEx);
-            if (!regExp.test(text)) {
-                return false;
-            }
-        }
-        return true;
-    }
-    integerTest(text) {
-        const zahl = parseInt(text, 10);
-        if (isNaN(zahl)) {
-            return false;
-        }
-        if (this.spezifikation.Min) {
-            if (zahl < this.spezifikation.Min) {
-                return false;
-            }
-        }
-        if (this.spezifikation.Max) {
-            if (zahl > this.spezifikation.Max) {
-                return false;
-            }
-        }
-        if (this.spezifikation.MöglicheWerte) {
-            if (!this.spezifikation.MöglicheWerte.includes(zahl)) {
-                return false;
-            }
-        }
-        if (this.spezifikation.RegEx) {
-            const regExp = new RegExp(this.spezifikation.RegEx);
-            if (!regExp.test(text)) {
-                return false;
-            }
-        }
-        return true;
-    }
-    floatTest(text) {
-        const zahl = parseFloat(text);
-        if (isNaN(zahl)) {
-            return false;
-        }
-        if (this.spezifikation.Min) {
-            if (zahl < this.spezifikation.Min) {
-                return false;
-            }
-        }
-        if (this.spezifikation.Max) {
-            if (zahl > this.spezifikation.Max) {
-                return false;
-            }
-        }
-        if (this.spezifikation.MöglicheWerte) {
-            if (!this.spezifikation.MöglicheWerte.includes(zahl)) {
-                return false;
-            }
-        }
-        if (this.spezifikation.RegEx) {
-            const regExp = new RegExp(this.spezifikation.RegEx);
-            if (!regExp.test(text)) {
-                return false;
-            }
-        }
-        return true;
-    }
-    dateTest(text) {
-        console.log(Date.parse(text));
-        if (isNaN(Date.parse(text))) {
-            return false;
-        }
-        return true;
     }
 }
 const textEingabefeld = new Eingabefeld({
@@ -193,6 +162,7 @@ const textEingabefeld = new Eingabefeld({
     "Maximallänge": 3,
     "MöglicheWerte": ["Er", "Sie", "Es"]
 });
+textEingabefeld.registriereTest("string", new TestString());
 document.write("Sie: " + textEingabefeld.test("Sie") + "<br>");
 document.write("Siehe: " + textEingabefeld.test("Siehe") + "<br>");
 document.write("x: " + textEingabefeld.test("x") + "<br>");
@@ -206,6 +176,7 @@ const integerEingabefeld = new Eingabefeld({
     "Max": 9,
     "MöglicheWerte": [3, 13]
 });
+integerEingabefeld.registriereTest("integer", new TestInteger());
 document.write("1: " + integerEingabefeld.test("1") + "<br>");
 document.write("3: " + integerEingabefeld.test("3") + "<br>");
 document.write("13: " + integerEingabefeld.test("13") + "<br>");
@@ -213,6 +184,7 @@ document.write("Hugo: " + integerEingabefeld.test("Hugo") + "<br>");
 const datumsEingabefeld = new Eingabefeld({
     "Typ": "date"
 });
+datumsEingabefeld.registriereTest("date", new TestDate());
 document.write("2020-12-11: " + datumsEingabefeld.test("2020-12-11") + "<br>");
 document.write("Hugo: " + datumsEingabefeld.test("Hugo") + "<br>");
 //# sourceMappingURL=SAPDatentypen.js.map
