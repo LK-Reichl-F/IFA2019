@@ -49,7 +49,7 @@ class stringTest implements Test {
             }
         }
         if (spezifikation.RegEx) {
-            const regex = RegExp(this.spezifikation.RegEx);
+            const regex = RegExp(spezifikation.RegEx);
             if (!regex.test(text)) {
                 return false;
             }
@@ -66,27 +66,27 @@ class integerTest implements Test {
             return false;
         }
         if (spezifikation.MaxLänge) {
-            if (text.length > this.spezifikation.MaxLänge) {
+            if (text.length > spezifikation.MaxLänge) {
                 return false;
             }
         }
         if (spezifikation.MöglicheWerte) {
-            if (!this.spezifikation.MöglicheWerte.includes(intWert)) {
+            if (!spezifikation.MöglicheWerte.includes(intWert)) {
                 return false;
             }
         }
         if (spezifikation.Max) {
-            if (intWert > this.spezifikation.Max) {
+            if (intWert > spezifikation.Max) {
                 return false;
             }
         }
         if (spezifikation.Min) {
-            if (intWert < this.spezifikation.Min) {
+            if (intWert < spezifikation.Min) {
                 return false;
             }
         }
         if (spezifikation.RegEx) {
-            const regex = RegExp(this.spezifikation.RegEx);
+            const regex = RegExp(spezifikation.RegEx);
             if (!regex.test(text)) {
                 return false;
             }

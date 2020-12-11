@@ -19,31 +19,89 @@ const zustimmung = {
     "Beschriftung": "Sind Sie einverstanden?",
     "Typ": "boolean"
 };
-// document.write(entfernung.Beschriftung);
-// document.write(geschlecht.MöglicheWerte[0]);
-// Übung:
-// Überlege Dir drei verschiedene Beschreibungen für
-// Eingabefelder und wie Du sie im JSON-Format beschreiben würdest:
+// Die Klasse verspricht (mit implements), dass sie den Vertrag erfüllt:
+class stringTest {
+    test(text, spezifikation) {
+        if (spezifikation.MaxLänge) {
+            if (text.length > spezifikation.MaxLänge) {
+                return false;
+            }
+        }
+        if (spezifikation.MöglicheWerte) {
+            if (!spezifikation.MöglicheWerte.includes(text)) {
+                return false;
+            }
+        }
+        if (spezifikation.RegEx) {
+            const regex = RegExp(spezifikation.RegEx);
+            if (!regex.test(text)) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+// Die Klasse verspricht (mit implements), dass sie den Vertrag erfüllt:
+class integerTest {
+    test(text, spezifikation) {
+        const intWert = parseInt(text, 10);
+        if (intWert === NaN) {
+            return false;
+        }
+        if (spezifikation.MaxLänge) {
+            if (text.length > spezifikation.MaxLänge) {
+                return false;
+            }
+        }
+        if (spezifikation.MöglicheWerte) {
+            if (!spezifikation.MöglicheWerte.includes(intWert)) {
+                return false;
+            }
+        }
+        if (spezifikation.Max) {
+            if (intWert > spezifikation.Max) {
+                return false;
+            }
+        }
+        if (spezifikation.Min) {
+            if (intWert < spezifikation.Min) {
+                return false;
+            }
+        }
+        if (spezifikation.RegEx) {
+            const regex = RegExp(spezifikation.RegEx);
+            if (!regex.test(text)) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
 class Eingabefeld {
     constructor(spezifikation) {
         this.spezifikation = spezifikation;
     }
+    registriereTest(typ, testobjekt) {
+        this.testObjekte.set(typ, testobjekt);
+    }
     // Diese Funktion soll prüfen, ob ein Text der Spezifikation entspricht:
     test(text) {
-        switch (this.spezifikation.Typ) {
-            case "integer":
-                return this.testInteger(text);
-            case "string":
-                return this.testString(text);
-            case "date":
-                return this.testDate(text);
-            case "boolean":
-                return this.testBoolean(text);
-            case "float":
-                return this.testFloat(text);
-            default:
-                throw new Error("Ungültiger Typ.");
-        }
+        const testObjekt = this.testObjekte.get(this.spezifikation.Typ);
+        return testObjekt.test(text, this.spezifikation);
+        // switch (this.spezifikation.Typ) {
+        //     case "integer":
+        //         return this.testInteger(text);
+        //     case "string":
+        //         return this.testString(text);
+        //     case "date":
+        //         return this.testDate(text);
+        //     case "boolean":
+        //         return this.testBoolean(text);
+        //     case "float":
+        //         return this.testFloat(text);
+        //     default:
+        //         throw new Error("Ungültiger Typ.");
+        // }
     }
     testString(text) {
         if (this.spezifikation.MaxLänge) {
