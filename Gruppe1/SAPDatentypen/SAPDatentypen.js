@@ -75,15 +75,15 @@ class Eingabefeld {
     constructor(spezifikation) {
         this.spezifikation = spezifikation;
     }
-    registriereTest(einTest, typ) {
+    registriereTest(typ, einTest) {
         this.testMap.set(typ, einTest);
     }
     test(text) {
-        const test = this.testMap.get(this.spezifikation.Typ);
-        if (test === undefined) {
+        const testObjekt = this.testMap.get(this.spezifikation.Typ);
+        if (testObjekt === undefined) {
             throw new Error("Für den Typ " + this.spezifikation.Typ + " gibt es keinen Test.");
         }
-        return test.test(text, this.spezifikation);
+        return testObjekt.test(text, this.spezifikation);
         // switch (this.spezifikation.Typ) {
         //     case "integer":
         //         return this.integerTest(text);
