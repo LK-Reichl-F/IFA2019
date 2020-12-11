@@ -30,27 +30,99 @@ const zustimmung = {
 // Überlege Dir drei verschiedene Beschreibungen für
 // Eingabefelder und wie Du sie im JSON-Format beschreiben würdest:
 
+// Das interface ist so etwas wie ein Vertrag:
+interface Test {
+    test(text: string, spezifikation: any): boolean;
+}
+
+// Die Klasse verspricht (mit implements), dass sie den Vertrag erfüllt:
+class stringTest implements Test {
+    public test(text: string, spezifikation: any): boolean {
+        if (spezifikation.MaxLänge) {
+            if (text.length > spezifikation.MaxLänge) {
+                return false;
+            }
+        }
+        if (spezifikation.MöglicheWerte) {
+            if (!spezifikation.MöglicheWerte.includes(text)) {
+                return false;
+            }
+        }
+        if (spezifikation.RegEx) {
+            const regex = RegExp(this.spezifikation.RegEx);
+            if (!regex.test(text)) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+
+// Die Klasse verspricht (mit implements), dass sie den Vertrag erfüllt:
+class integerTest implements Test {
+    public test(text: string, spezifikation: any): boolean {
+        const intWert = parseInt(text, 10);
+        if (intWert === NaN) {
+            return false;
+        }
+        if (spezifikation.MaxLänge) {
+            if (text.length > this.spezifikation.MaxLänge) {
+                return false;
+            }
+        }
+        if (spezifikation.MöglicheWerte) {
+            if (!this.spezifikation.MöglicheWerte.includes(intWert)) {
+                return false;
+            }
+        }
+        if (spezifikation.Max) {
+            if (intWert > this.spezifikation.Max) {
+                return false;
+            }
+        }
+        if (spezifikation.Min) {
+            if (intWert < this.spezifikation.Min) {
+                return false;
+            }
+        }
+        if (spezifikation.RegEx) {
+            const regex = RegExp(this.spezifikation.RegEx);
+            if (!regex.test(text)) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+
 class Eingabefeld {
-    private spezifikation;
-    public constructor(spezifikation) {
+    private spezifikation: any;
+    private testObjekte: Map<string, Test>;
+    public constructor(spezifikation:any) {
         this.spezifikation = spezifikation;
+    }
+    public registriereTest(typ: string, testobjekt: Test) {
+        this.testObjekte.set(typ, testobjekt);
     }
     // Diese Funktion soll prüfen, ob ein Text der Spezifikation entspricht:
     public test(text: string): boolean {
-        switch (this.spezifikation.Typ) {
-            case "integer":
-                return this.testInteger(text);
-            case "string":
-                return this.testString(text);
-            case "date":
-                return this.testDate(text);
-            case "boolean":
-                return this.testBoolean(text);
-            case "float":
-                return this.testFloat(text);
-            default:
-                throw new Error("Ungültiger Typ.");
-        }
+        const testObjekt = this.testObjekte.get(this.spezifikation.Typ);
+        return testObjekt.test(text, this.spezifikation);
+    
+        // switch (this.spezifikation.Typ) {
+        //     case "integer":
+        //         return this.testInteger(text);
+        //     case "string":
+        //         return this.testString(text);
+        //     case "date":
+        //         return this.testDate(text);
+        //     case "boolean":
+        //         return this.testBoolean(text);
+        //     case "float":
+        //         return this.testFloat(text);
+        //     default:
+        //         throw new Error("Ungültiger Typ.");
+        // }
     }
 
     private testString(text: string): boolean {
