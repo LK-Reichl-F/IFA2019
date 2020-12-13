@@ -1,5 +1,5 @@
 class Telefonbuch {
-    private Einträge: Map<string, number>;
+    private Einträge = new Map<string, number>();
     public trageEin(name: string, nummer: number) {
         this.Einträge.set(name, nummer);
     }
@@ -7,4 +7,3 @@ class Telefonbuch {
         return this.Einträge.get(name);
     }
 }
-

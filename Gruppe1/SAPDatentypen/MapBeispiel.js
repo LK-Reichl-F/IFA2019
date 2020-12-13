@@ -1,4 +1,7 @@
 class Telefonbuch {
+    constructor() {
+        this.Einträge = new Map();
+    }
     trageEin(name, nummer) {
         this.Einträge.set(name, nummer);
     }
