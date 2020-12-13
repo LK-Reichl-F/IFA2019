@@ -7,7 +7,7 @@ const meinEingabefeld = {
     "BereichMin": 0,
     "BereichMax": 140
 };
-// document.write(meinEingabefeld.Beschriftung);
+// console.log(meinEingabefeld.Beschriftung);
 // Übung:
 // Beschreibe etwa drei verschiedene Eingabefelder
 // im JSON-Format, so dass sie später von unserem
@@ -154,6 +154,21 @@ class Eingabefeld {
         }
         return testObjekt.test(text, this.spezifikation);
     }
+    platziereDichAufDerHTMLSeite(wohin) {
+        const ziel = document.getElementById(wohin);
+        // Wir haben hier zwei Alternativen:
+        // 1. Möglichkeit: Wir fügen einfach HTML-Text in die Seite ein:
+        ziel.innerHTML = '<input type="text" id="info">';
+        // 2. Möglichkeit: Wir erzeugen die HTML-Element in JavaScript/TypeScript und fügen sie in die Seite ein:
+        const input = document.createElement("input");
+        const type = document.createAttribute("type");
+        type.value = "text";
+        input.setAttributeNode(type);
+        const id = document.createAttribute("id");
+        id.value = "info";
+        input.setAttributeNode(id); // Diese id muss eindeutig sein
+        ziel.appendChild(input);
+    }
 }
 const textEingabefeld = new Eingabefeld({
     "Beschriftung": "Gib einen Text ein",
@@ -163,10 +178,11 @@ const textEingabefeld = new Eingabefeld({
     "MöglicheWerte": ["Er", "Sie", "Es"]
 });
 textEingabefeld.registriereTest("string", new TestString());
-document.write("Sie: " + textEingabefeld.test("Sie") + "<br>");
-document.write("Siehe: " + textEingabefeld.test("Siehe") + "<br>");
-document.write("x: " + textEingabefeld.test("x") + "<br>");
-document.write("xy: " + textEingabefeld.test("xy") + "<br>");
+textEingabefeld.platziereDichAufDerHTMLSeite("ziel1");
+console.log("Sie: " + textEingabefeld.test("Sie"));
+console.log("Siehe: " + textEingabefeld.test("Siehe"));
+console.log("x: " + textEingabefeld.test("x"));
+console.log("xy: " + textEingabefeld.test("xy"));
 // Übung:
 // Programmiere den Test für den Typ integer
 // Benutze parseInt
@@ -177,14 +193,14 @@ const integerEingabefeld = new Eingabefeld({
     "MöglicheWerte": [3, 13]
 });
 integerEingabefeld.registriereTest("integer", new TestInteger());
-document.write("1: " + integerEingabefeld.test("1") + "<br>");
-document.write("3: " + integerEingabefeld.test("3") + "<br>");
-document.write("13: " + integerEingabefeld.test("13") + "<br>");
-document.write("Hugo: " + integerEingabefeld.test("Hugo") + "<br>");
+console.log("1: " + integerEingabefeld.test("1"));
+console.log("3: " + integerEingabefeld.test("3"));
+console.log("13: " + integerEingabefeld.test("13"));
+console.log("Hugo: " + integerEingabefeld.test("Hugo"));
 const datumsEingabefeld = new Eingabefeld({
     "Typ": "date"
 });
 datumsEingabefeld.registriereTest("date", new TestDate());
-document.write("2020-12-11: " + datumsEingabefeld.test("2020-12-11") + "<br>");
-document.write("Hugo: " + datumsEingabefeld.test("Hugo") + "<br>");
+console.log("2020-12-11: " + datumsEingabefeld.test("2020-12-11"));
+console.log("Hugo: " + datumsEingabefeld.test("Hugo"));
 //# sourceMappingURL=SAPDatentypen.js.map
