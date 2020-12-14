@@ -175,6 +175,24 @@ class Eingabefeld {
         }
         return testObjekt.test(text, this.spezifikation);
     }
+    public patziereDichAufDerHTMLSeite(wohin:string) {
+        const ziel = document.getElementById(wohin);
+
+        // Wir haben zwei Möglichkeiten:
+
+        // Wir schreiben einen String mit HTML-Inhalten an das Ziel:
+        ziel.innerHTML = '<input type="text" id="info">';
+
+        // oder: Wir erzeugen die HTML-Elemente in JavaScript/TypeScript und fügen sie ein:
+        const input = document.createElement("input");
+        const type = document.createAttribute("type");
+        type.value = "text";
+        input.setAttributeNode(type);
+        const id = document.createAttribute("id");
+        id.value = "info";
+        input.setAttributeNode(id);
+        ziel.appendChild(input);
+    }
 }
 
 document.write("Test von string, Länge 3, Mögliche Werte Er, Sie, Es<br>")
