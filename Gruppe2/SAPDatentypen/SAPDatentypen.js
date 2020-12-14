@@ -41,6 +41,41 @@ class stringTest {
         return true;
     }
 }
+class floatTest {
+    test(text, spezifikation) {
+        const floatWert = parseFloat(text);
+        if (floatWert === NaN) {
+            return false;
+        }
+        if (spezifikation.MaxLänge) {
+            if (text.length > spezifikation.MaxLänge) {
+                return false;
+            }
+        }
+        if (spezifikation.MöglicheWerte) {
+            if (!spezifikation.MöglicheWerte.includes(floatWert)) {
+                return false;
+            }
+        }
+        if (spezifikation.Max) {
+            if (floatWert > spezifikation.Max) {
+                return false;
+            }
+        }
+        if (spezifikation.Min) {
+            if (floatWert < spezifikation.Min) {
+                return false;
+            }
+        }
+        if (spezifikation.RegEx) {
+            const regex = RegExp(spezifikation.RegEx);
+            if (!regex.test(text)) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
 // Die Klasse verspricht (mit implements), dass sie den Vertrag erfüllt:
 class integerTest {
     test(text, spezifikation) {
@@ -77,6 +112,29 @@ class integerTest {
         return true;
     }
 }
+class booleanTest {
+    test(text, spezifikation) {
+        if (spezifikation.Min === true) {
+            if (text === "false") {
+                return false;
+            }
+        }
+        if (spezifikation.Max === false) {
+            if (text === "true") {
+                return false;
+            }
+        }
+    }
+}
+class dateTest {
+    test(text, spezifikation) {
+        const datum = Date.parse(text);
+        if (isNaN(datum)) {
+            return false;
+        }
+        return true;
+    }
+}
 class Eingabefeld {
     constructor(spezifikation) {
         this.spezifikation = spezifikation;
@@ -87,127 +145,10 @@ class Eingabefeld {
     // Diese Funktion soll prüfen, ob ein Text der Spezifikation entspricht:
     test(text) {
         const testObjekt = this.testObjekte.get(this.spezifikation.Typ);
+        if (testObjekt === undefined) {
+            throw new Error("Es gibt einen Test für den Typ " + this.spezifikation.Typ);
+        }
         return testObjekt.test(text, this.spezifikation);
-        // switch (this.spezifikation.Typ) {
-        //     case "integer":
-        //         return this.testInteger(text);
-        //     case "string":
-        //         return this.testString(text);
-        //     case "date":
-        //         return this.testDate(text);
-        //     case "boolean":
-        //         return this.testBoolean(text);
-        //     case "float":
-        //         return this.testFloat(text);
-        //     default:
-        //         throw new Error("Ungültiger Typ.");
-        // }
-    }
-    testString(text) {
-        if (this.spezifikation.MaxLänge) {
-            if (text.length > this.spezifikation.MaxLänge) {
-                return false;
-            }
-        }
-        if (this.spezifikation.MöglicheWerte) {
-            if (!this.spezifikation.MöglicheWerte.includes(text)) {
-                return false;
-            }
-        }
-        if (this.spezifikation.RegEx) {
-            const regex = RegExp(this.spezifikation.RegEx);
-            if (!regex.test(text)) {
-                return false;
-            }
-        }
-        return true;
-    }
-    // Übung:
-    // Probiere die Funktion testInteger(text) zu schreiben:
-    testInteger(text) {
-        const intWert = parseInt(text, 10);
-        if (intWert === NaN) {
-            return false;
-        }
-        if (this.spezifikation.MaxLänge) {
-            if (text.length > this.spezifikation.MaxLänge) {
-                return false;
-            }
-        }
-        if (this.spezifikation.MöglicheWerte) {
-            if (!this.spezifikation.MöglicheWerte.includes(intWert)) {
-                return false;
-            }
-        }
-        if (this.spezifikation.Max) {
-            if (intWert > this.spezifikation.Max) {
-                return false;
-            }
-        }
-        if (this.spezifikation.Min) {
-            if (intWert < this.spezifikation.Min) {
-                return false;
-            }
-        }
-        if (this.spezifikation.RegEx) {
-            const regex = RegExp(this.spezifikation.RegEx);
-            if (!regex.test(text)) {
-                return false;
-            }
-        }
-        return true;
-    }
-    testFloat(text) {
-        const floatWert = parseFloat(text);
-        if (floatWert === NaN) {
-            return false;
-        }
-        if (this.spezifikation.MaxLänge) {
-            if (text.length > this.spezifikation.MaxLänge) {
-                return false;
-            }
-        }
-        if (this.spezifikation.MöglicheWerte) {
-            if (!this.spezifikation.MöglicheWerte.includes(floatWert)) {
-                return false;
-            }
-        }
-        if (this.spezifikation.Max) {
-            if (floatWert > this.spezifikation.Max) {
-                return false;
-            }
-        }
-        if (this.spezifikation.Min) {
-            if (floatWert < this.spezifikation.Min) {
-                return false;
-            }
-        }
-        if (this.spezifikation.RegEx) {
-            const regex = RegExp(this.spezifikation.RegEx);
-            if (!regex.test(text)) {
-                return false;
-            }
-        }
-        return true;
-    }
-    testBoolean(text) {
-        if (this.spezifikation.Min === true) {
-            if (text === "false") {
-                return false;
-            }
-        }
-        if (this.spezifikation.Max === false) {
-            if (text === "true") {
-                return false;
-            }
-        }
-    }
-    testDate(text) {
-        const datum = Date.parse(text);
-        if (isNaN(datum)) {
-            return false;
-        }
-        return true;
     }
 }
 document.write("Test von string, Länge 3, Mögliche Werte Er, Sie, Es<br>");
