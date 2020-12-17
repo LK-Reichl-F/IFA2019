@@ -21,7 +21,7 @@ const meineEmailAdresse = {
     "Typ": "string",
     "Mindestlänge": "1",
     "mussEnthalten": "@",
-    "mussDerRegularExpressionEntsprechen": "[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{2,4}"
+    "mussDerRegularExpressionEntsprechen": "[0-9]{1,2}\\.[0-9]{1,2}\\.[0-9]{2,4}\n"
 }
 
 const meinGeburtstag = {
