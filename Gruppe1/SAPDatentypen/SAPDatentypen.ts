@@ -158,6 +158,7 @@ class TestDate implements Test {
 }
 
 class Eingabefeld {
+    private zahl: number = 0;
     private testMap: Map<string, Test>;
     private spezifikation: any;
     public constructor(spezifikation: any) {
@@ -174,21 +175,89 @@ class Eingabefeld {
         }
         return testObjekt.test(text, this.spezifikation);
     }
+
     public platziereDichAufDerHTMLSeite(wohin) {
         const ziel = document.getElementById(wohin);
         // Wir haben hier zwei Alternativen:
 
         // 1. Möglichkeit: Wir fügen einfach HTML-Text in die Seite ein:
-        ziel.innerHTML = '<input type="text" id="info">';
+        // ziel.innerHTML = '<input type="text" id="info">';
 
         // 2. Möglichkeit: Wir erzeugen die HTML-Element in JavaScript/TypeScript und fügen sie in die Seite ein:
         const input = document.createElement("input");
+
         const type = document.createAttribute("type");
-        type.value = "text";
+        switch (this.spezifikation.Typ) {
+            case "integer":
+                const step = document.createAttribute("step");
+                step.value = "1";
+                input.setAttributeNode(step);
+            case "float":
+                type.value = "number"
+                break;
+            case "string":
+                type.value = "text";
+                break;
+            case "date":
+                type.value = "date";
+        }
         input.setAttributeNode(type);
+
+        // Erzeugen einer eindeutigen ID:
         const id = document.createAttribute("id");
-        id.value = "info";
+        let idText: string;
+        do {
+            this.zahl++;
+            idText = "input" + this.zahl;
+        } while (document.getElementById(idText) !== null);
+        id.value = idText;
         input.setAttributeNode(id); // Diese id muss eindeutig sein
+
+        if (this.spezifikation.Max) {
+            const max = document.createAttribute("max");
+            max.value = this.spezifikation.Max;
+            input.setAttributeNode(max);
+        }
+
+        if (this.spezifikation.Min) {
+            const min = document.createAttribute("min");
+            min.value = this.spezifikation.Min;
+            input.setAttributeNode(min);
+        }
+
+        if (this.spezifikation.Mindestlänge) {
+            const minlength = document.createAttribute("minlength");
+            minlength.value = this.spezifikation.Mindestlänge;
+            input.setAttributeNode(minlength);
+        }
+
+        if (this.spezifikation.Maximallänge) {
+            const maxlength = document.createAttribute("maxlength");
+            maxlength.value = this.spezifikation.Maximallänge;
+            input.setAttributeNode(maxlength);
+        }
+
+        if (this.spezifikation.RegEx) {
+            const pattern = document.createAttribute("pattern");
+            pattern.value = this.spezifikation.RegEx;
+            input.setAttributeNode(pattern);
+        }
+
+        if (this.spezifikation.Beschriftung) {
+            const label = document.createElement("label");
+            const forAttribut = document.createAttribute("for");
+            forAttribut.value = idText;
+            label.setAttributeNode(forAttribut);
+            label.innerText = this.spezifikation.Beschriftung;
+            ziel.appendChild(label);
+        }
+
+        input.addEventListener("input", function (event) {
+            if (event.target instanceof HTMLInputElement) {
+                event.target.reportValidity();
+            }
+        });
+
         ziel.appendChild(input);
     }
 }
@@ -201,7 +270,10 @@ const textEingabefeld = new Eingabefeld({
     "MöglicheWerte": ["Er", "Sie", "Es"]
 });
 textEingabefeld.registriereTest("string", new TestString());
-textEingabefeld.platziereDichAufDerHTMLSeite("ziel1");
+
+window.onload = function () {
+    textEingabefeld.platziereDichAufDerHTMLSeite("ziel1");
+}
 
 console.log("Sie: " + textEingabefeld.test("Sie"));
 console.log("Siehe: " + textEingabefeld.test("Siehe"));
