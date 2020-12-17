@@ -13,11 +13,11 @@ window.onload = function () {
 function meineNumberInput(einEvent) {
     console.log(einEvent.target.value);
     const meineNumber = einEvent.target;
-    const zustand = meineNumber.validity;
-    if (zustand.rangeUnderflow) {
-        meineNumber.setCustomValidity("Bitte ein Zahl größer oder gleich 3 eingeben.");
-    } else {
-        meineNumber.setCustomValidity("");
-    }
+    // const zustand = meineNumber.validity;
+    // if (zustand.rangeUnderflow) {
+    //     meineNumber.setCustomValidity("Bitte ein Zahl größer oder gleich 3 eingeben.");
+    // } else {
+    //     meineNumber.setCustomValidity("");
+    // }
     meineNumber.reportValidity();
 }

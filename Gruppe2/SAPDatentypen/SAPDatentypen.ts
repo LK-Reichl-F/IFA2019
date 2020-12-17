@@ -36,7 +36,7 @@ interface Test {
 }
 
 // Die Klasse verspricht (mit implements), dass sie den Vertrag erfüllt:
-class stringTest implements Test {
+class StringTest implements Test {
     public test(text: string, spezifikation: any): boolean {
         if (spezifikation.MaxLänge) {
             if (text.length > spezifikation.MaxLänge) {
@@ -132,37 +132,38 @@ class integerTest implements Test {
     }
 }
 
-class booleanTest implements Test {
+class BooleanTest implements Test {
     public test(text: string, spezifikation: any): boolean {
         if (spezifikation.Min === true) {
-            if (text==="false") {
+            if (text === "false") {
                 return false;
             }
         }
         if (spezifikation.Max === false) {
-            if (text==="true") {
+            if (text === "true") {
                 return false;
             }
         }
     }
 }
 
-class dateTest implements Test {
+class DateTest implements Test {
     public test(text: string, spezifikation: any): boolean {
         const datum = Date.parse(text);
         if (isNaN(datum)) {
             return false;
         }
         return true;
-    } 
+    }
 
 }
 
 class Eingabefeld {
     private spezifikation: any;
     private testObjekte: Map<string, Test>;
-    public constructor(spezifikation:any) {
+    public constructor(spezifikation: any) {
         this.spezifikation = spezifikation;
+        this.testObjekte = new Map<string, Test>();
     }
     public registriereTest(typ: string, testobjekt: Test) {
         this.testObjekte.set(typ, testobjekt);
@@ -175,49 +176,121 @@ class Eingabefeld {
         }
         return testObjekt.test(text, this.spezifikation);
     }
-    public patziereDichAufDerHTMLSeite(wohin:string) {
+    public patziereDichAufDerHTMLSeite(wohin: string) {
         const ziel = document.getElementById(wohin);
+
+        let idText: string;
+        do {
+            idText = "id-" + Math.floor(Math.random() * 1000000);
+        } while (document.getElementById(idText) !== null);
 
         // Wir haben zwei Möglichkeiten:
 
         // Wir schreiben einen String mit HTML-Inhalten an das Ziel:
-        ziel.innerHTML = '<input type="text" id="info">';
+        // ziel.innerHTML = '<input type="text" id="info">';
 
         // oder: Wir erzeugen die HTML-Elemente in JavaScript/TypeScript und fügen sie ein:
         const input = document.createElement("input");
+
         const type = document.createAttribute("type");
-        type.value = "text";
+        switch (this.spezifikation.Typ) {
+            case "integer":
+            case "float":
+                type.value = "number";
+                break;
+            case "date":
+                type.value = "date";
+                break;
+            case "boolean":
+                type.value = "checkbox";
+                break;
+            case "string":
+                type.value = "text";
+            // Hier könnte man bei einer Liste möglicher Werte
+            // auch überlegen, ein Select-Element zu benutzen.
+        }
         input.setAttributeNode(type);
+
         const id = document.createAttribute("id");
-        id.value = "info";
+        id.value = idText;
         input.setAttributeNode(id);
+
+        if (this.spezifikation.Min) {
+            const min = document.createAttribute("min");
+            min.value = this.spezifikation.Min;
+            input.setAttributeNode(min);
+        }
+
+        if (this.spezifikation.Max) {
+            const max = document.createAttribute("max");
+            max.value = this.spezifikation.Max;
+            input.setAttributeNode(max);
+        }
+
+        if (this.spezifikation.MaxLänge) {
+            const maxlength = document.createAttribute("maxlength");
+            maxlength.value = this.spezifikation.MaxLänge;
+            input.setAttributeNode(maxlength);
+        }
+
+        if (this.spezifikation.RegEx) {
+            const pattern = document.createAttribute("pattern");
+            pattern.value = this.spezifikation.RegEx;
+            input.setAttributeNode(pattern);
+        }
+
+        const label = document.createElement("label");
+        const labelText = document.createTextNode(this.spezifikation.Beschriftung);
+        label.appendChild(labelText);
+        const forAttribut = document.createAttribute("for");
+        forAttribut.value = idText;
+        label.setAttributeNode(forAttribut);
+
+        input.addEventListener("input", function (einEvent: Event) {
+            const htmlElement = einEvent.target;
+            if (htmlElement instanceof HTMLInputElement) {
+                htmlElement.reportValidity();
+            }
+        });
+
+
+        ziel.appendChild(label);
         ziel.appendChild(input);
     }
 }
 
-document.write("Test von string, Länge 3, Mögliche Werte Er, Sie, Es<br>")
+// document.write("Test von string, Länge 3, Mögliche Werte Er, Sie, Es<br>")
 const meinEingabefeld = new Eingabefeld({
     "Typ": "string",
     "MaxLänge": 3,
     "MöglicheWerte": ['Er', 'Sie', 'Es']
 });
+meinEingabefeld.registriereTest("string", new StringTest());
 
-document.write("Sie: " + meinEingabefeld.test('Sie') + "<br>");
-document.write("Test: " + meinEingabefeld.test('Test') + "<br>");
-document.write("xy: " + meinEingabefeld.test('xy') + "<br>");
+// document.write("Sie: " + meinEingabefeld.test('Sie') + "<br>");
+// document.write("Test: " + meinEingabefeld.test('Test') + "<br>");
+// document.write("xy: " + meinEingabefeld.test('xy') + "<br>");
 
-document.write("<hr>Test von date:<br>");
+// document.write("<hr>Test von date:<br>");
 const meinDatum = new Eingabefeld({
     "Typ": "date"
 })
-document.write("2020-12-10: " + meinDatum.test("2020-12-10") + "<br>");;
-document.write("Hugo: " + meinDatum.test("Hugo") + "<br>");;
+meinDatum.registriereTest("date", new DateTest());
 
-document.write("<hr>Test einer E-Mail-Adresse:<br>");
+// document.write("2020-12-10: " + meinDatum.test("2020-12-10") + "<br>");;
+// document.write("Hugo: " + meinDatum.test("Hugo") + "<br>");;
+
+// document.write("<hr>Test einer E-Mail-Adresse:<br>");
 const meineEmail = new Eingabefeld({
+    "Beschriftung": "Deine E-Mail-Adresse",
     "Typ": "string",
-    "RegEx": "[A-Za-z]+[A-Za-z0-9\.\-_]*@[a-z]+[a-z0-9\.\-_]*[0-9a-z]"
+    "RegEx": "[A-Za-z]+[A-Za-z0-9\\.\\-_]*@[a-z]+[a-z0-9\\.\\-_]*[0-9a-z]"
 });
+meineEmail.registriereTest("string", new StringTest());
 
-document.write("reichl.f@bs-hassfurt.de" + meineEmail.test("reichl.f@bs-hassfurt.de") + "<br>");
-document.write("reichl.fbs-hassfurt.de." + meineEmail.test("reichl.fbs-hassfurt.de.") + "<br>");
+// document.write("reichl.f@bs-hassfurt.de" + meineEmail.test("reichl.f@bs-hassfurt.de") + "<br>");
+// document.write("reichl.fbs-hassfurt.de." + meineEmail.test("reichl.fbs-hassfurt.de.") + "<br>");
+
+window.onload = function () {
+    meineEmail.patziereDichAufDerHTMLSeite("meinDiv");
+}
