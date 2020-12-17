@@ -25,7 +25,7 @@
 // Deshalb hat sie eine Methode update().
 // Diese Methode holt sich vom ConcreteSubject
 // den neuen String und zeigt ihn an.
-// Damit sie kann, muss im Konstruktor von
+// Damit sie das kann, muss im Konstruktor von
 // ConcreteObserver das ConcreteSubject abgespeichert sein.
 // Außerdem muss sich der ConcreteObserver beim
 // ConcreteSubject mit attach anmelden.
